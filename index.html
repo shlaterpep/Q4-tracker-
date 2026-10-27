@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Shakecunt Meet Up Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Archivo:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: league table. Royal blue masthead, stat strip, then a ranked table with a red relegation zone, then match results. */
+:root {
+  --bg: #ffffff;
+  --fg: #0b0d12;
+  --muted: #5a6070;
+  --line: #d6d9e0;
+  --band: #1f3fff;
+  --band-fg: #ffffff;
+  --accent: #1f3fff;
+  --risk: #d4180d;
+  --risk-ink: #ffffff;
+  --risk-soft: #fde6e4;
+  --risk-text: #b3120a;
+  --display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --body: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a0c12;
+    --fg: #f2f4fa;
+    --muted: #9aa1b5;
+    --line: #272b38;
+    --band: #2a49ff;
+    --band-fg: #ffffff;
+    --accent: #8fa3ff;
+    --risk: #ff5a4d;
+    --risk-ink: #1c0604;
+    --risk-soft: #2c1210;
+    --risk-text: #ff8a80;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0a0c12;
+  --fg: #f2f4fa;
+  --muted: #9aa1b5;
+  --line: #272b38;
+  --band: #2a49ff;
+  --band-fg: #ffffff;
+  --accent: #8fa3ff;
+  --risk: #ff5a4d;
+  --risk-ink: #1c0604;
+  --risk-soft: #2c1210;
+  --risk-text: #ff8a80;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.45;
+}
+.inner {
+  max-width: 980px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* Masthead */
+.band { background: var(--band); color: var(--band-fg); }
+.band .inner { padding-block: 28px 34px; display: flex; flex-direction: column; gap: 22px; }
+.kicker { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+.kicker b { background: var(--band-fg); color: var(--band); padding: 4px 9px; font-weight: 700; }
+h1 {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(54px, 13.5vw, 150px);
+  line-height: 0.86;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* Stat strip */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 2px solid var(--fg); }
+.stat { padding: 20px 16px 18px 0; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.stat + .stat { padding-left: 16px; border-left: 1px solid var(--line); }
+.stat .n { font-family: var(--display); font-weight: 800; font-size: clamp(44px, 9vw, 80px); line-height: 0.9; font-variant-numeric: tabular-nums; }
+.stat .n small { font-size: 0.42em; color: var(--muted); font-weight: 700; margin-left: 2px; }
+.stat .l { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.stat.hot .n { color: var(--risk-text); }
+@media (max-width: 620px) {
+  .stats { grid-template-columns: 1fr 1fr; }
+  .stat:nth-child(3) { padding-left: 0; border-left: 0; }
+  .stat:nth-child(n+3) { border-top: 1px solid var(--line); }
+}
+
+/* Section titles */
+.sect { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-top: 36px; padding-bottom: 12px; }
+h2 { font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1; text-transform: uppercase; margin: 0; }
+.sect span { font-size: 14px; color: var(--muted); }
+
+/* Table */
+.thead, .row { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; column-gap: 14px; align-items: center; }
+.thead { padding: 8px 14px; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--fg); }
+.thead span:last-child { text-align: right; }
+.row { padding: 16px 14px; border-bottom: 1px solid var(--line); }
+.row.risk { background: var(--risk-soft); }
+.pos { font-family: var(--display); font-weight: 800; font-size: 44px; line-height: 1; font-variant-numeric: tabular-nums; }
+.pname { display: flex; flex-direction: column; gap: 9px; min-width: 0; }
+.pname .top { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.pname b { font-size: 20px; font-weight: 700; overflow-wrap: anywhere; }
+.flag { background: var(--risk); color: var(--risk-ink); font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 7px; white-space: nowrap; }
+.role { border: 2px solid var(--accent); color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; padding: 1px 6px; white-space: nowrap; }
+.pips { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; max-width: 220px; }
+.pips i { height: 8px; background: var(--line); }
+.pips i.on { background: var(--accent); }
+.row.risk .pips i { background: color-mix(in srgb, var(--risk) 28%, transparent); }
+.pts { font-family: var(--display); font-weight: 900; font-size: 56px; line-height: 1; text-align: right; font-variant-numeric: tabular-nums; }
+.pts small { font-size: 22px; color: var(--muted); font-weight: 700; }
+.zone { background: var(--risk); color: var(--risk-ink); padding: 7px 14px; font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+.rule { font-size: 14px; color: var(--muted); padding-top: 12px; }
+
+/* Results */
+.result { border-top: 2px solid var(--fg); padding: 18px 0 22px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px 16px; align-items: start; }
+.result:last-child { border-bottom: 1px solid var(--line); }
+.result h3 { font-family: var(--display); font-weight: 900; font-size: clamp(38px, 8vw, 64px); line-height: 0.92; text-transform: uppercase; margin: 0; overflow-wrap: anywhere; }
+.count { background: var(--band); color: var(--band-fg); width: 64px; padding: 8px 0 6px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.count .n { font-family: var(--display); font-weight: 900; font-size: 40px; line-height: 0.9; font-variant-numeric: tabular-nums; }
+.count .l { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.names { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 0; font-size: 14px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+.names span::after { content: "/"; color: var(--muted); margin: 0 10px; }
+.names span:last-child::after { content: ""; margin: 0; }
+
+footer { padding-block: 28px 40px; font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="band">
+  <div class="inner">
+    <div class="kicker"><b>Q4 2026 results</b><span>1 Oct to 31 Dec</span></div>
+    <h1>Shakecunt Meet Up Tracker</h1>
+  </div>
+</div>
+
+<div class="inner">
+  <div class="stats" id="stats"></div>
+
+  <div class="sect">
+    <h2>Q4 table</h2>
+    <span>1 point per meet up. 5 points to hit goal.</span>
+  </div>
+  <div class="thead"><span>Pos</span><span>Player</span><span>Pts</span></div>
+  <div id="table"></div>
+
+  <div class="sect">
+    <h2>Results</h2>
+    <span id="rcount"></span>
+  </div>
+  <div id="results"></div>
+
+  <footer>Table updates when someone leaves the house.</footer>
+</div>
+
+<script>
+(function () {
+  var GOAL = 5;
+  var people = [
+    { name: "Shane Pepper", pts: 2, role: "Leader" },
+    { name: "Donal Cronin", pts: 2, role: "Deputy leader" },
+    { name: "Gerard Walsh", pts: 1 },
+    { name: "Ryan Mac Manus", pts: 1 },
+    { name: "Conor Winters", pts: 0 },
+    { name: "Tom Howlin", pts: 0 }
+  ];
+  var events = [
+    { name: "Scotland", who: ["Shane Pepper", "Donal Cronin", "Gerard Walsh"] },
+    { name: "Waterford game", who: ["Shane Pepper", "Donal Cronin", "Ryan Mac Manus"] }
+  ];
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined) n.textContent = text;
+    return n;
+  }
+
+  var total = people.reduce(function (a, p) { return a + p.pts; }, 0);
+  var atRisk = people.filter(function (p) { return p.pts === 0; }).length;
+
+  var start = new Date(2026, 9, 1), end = new Date(2026, 11, 31, 23, 59, 59);
+  var now = new Date();
+  if (now < start) now = start;
+  if (now > end) now = end;
+  var daysLeft = Math.max(0, Math.ceil((end - now) / 86400000));
+
+  var stats = document.getElementById("stats");
+  function stat(n, small, label, cls) {
+    var s = el("div", "stat" + (cls ? " " + cls : ""));
+    var v = el("div", "n", String(n));
+    if (small) v.appendChild(el("small", "", small));
+    s.appendChild(v);
+    s.appendChild(el("div", "l", label));
+    stats.appendChild(s);
+  }
+  stat(total, "/" + people.length * GOAL, "Team points");
+  stat(events.length, "", "Meet ups logged");
+  stat(atRisk, "", "At risk", atRisk ? "hot" : "");
+  stat(daysLeft, "", "Days left in Q4");
+
+  var table = document.getElementById("table");
+  var sorted = people.slice().sort(function (a, b) { return b.pts - a.pts; });
+  var lastPts = null, lastRank = 0, zoneDone = false;
+  sorted.forEach(function (p, i) {
+    var rank = p.pts === lastPts ? lastRank : i + 1;
+    lastPts = p.pts; lastRank = rank;
+    var risk = p.pts === 0;
+    if (risk && !zoneDone) {
+      table.appendChild(el("div", "zone", "At risk. Zero meet ups this quarter."));
+      zoneDone = true;
+    }
+    var row = el("div", "row" + (risk ? " risk" : ""));
+    row.appendChild(el("div", "pos", String(rank)));
+    var nm = el("div", "pname");
+    var top = el("div", "top");
+    top.appendChild(el("b", "", p.name));
+    if (p.role) top.appendChild(el("span", "role", p.role));
+    if (risk) top.appendChild(el("span", "flag", "At risk"));
+    nm.appendChild(top);
+    var pips = el("div", "pips");
+    pips.setAttribute("role", "img");
+    pips.setAttribute("aria-label", p.pts + " of " + GOAL + " points");
+    for (var k = 0; k < GOAL; k++) pips.appendChild(el("i", k < p.pts ? "on" : ""));
+    nm.appendChild(pips);
+    row.appendChild(nm);
+    var pts = el("div", "pts", String(p.pts));
+    pts.appendChild(el("small", "", "/" + GOAL));
+    row.appendChild(pts);
+    table.appendChild(row);
+  });
+
+  document.getElementById("rcount").textContent = events.length + " logged this quarter";
+  var res = document.getElementById("results");
+  events.forEach(function (e) {
+    var r = el("article", "result");
+    r.appendChild(el("h3", "", e.name));
+    var c = el("div", "count");
+    c.appendChild(el("div", "n", String(e.who.length)));
+    c.appendChild(el("div", "l", "Present"));
+    r.appendChild(c);
+    var names = el("div", "names");
+    e.who.forEach(function (n) { names.appendChild(el("span", "", n)); });
+    r.appendChild(names);
+    res.appendChild(r);
+  });
+})();
+</script>
+</body>
+</html>
