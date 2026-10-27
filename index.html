@@ -219,7 +219,7 @@ footer { padding-block: 28px 40px; font-size: 13px; color: var(--muted); }
   var sorted = people.slice().sort(function (a, b) { return b.pts - a.pts; });
   var lastPts = null, lastRank = 0, zoneDone = false;
   sorted.forEach(function (p, i) {
-    var rank = p.pts === lastPts ? lastRank : i + 1;
+    var rank = i + 1;
     lastPts = p.pts; lastRank = rank;
     var risk = p.pts === 0;
     if (risk && !zoneDone) {
